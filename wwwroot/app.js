@@ -1,5 +1,6 @@
 // ─── State ───────────────────────────────────────────────────────────────────
 const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null };
+const UI_STATE_KEY = "mhrs.ui.state.v1";
 
 // ─── Element refs ─────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -37,6 +38,9 @@ const els = {
   scanStatusText: $("scanStatusText"),
 };
 
+let persistedUiState = {};
+let shouldResumeAutoScan = false;
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function toOptions(selectEl, list, includeAny = false) {
   selectEl.innerHTML = "";
@@ -58,6 +62,116 @@ function toOptions(selectEl, list, includeAny = false) {
 function parseHourCsv(raw) {
   if (!raw.trim()) return [];
   return raw.split(",").map(x => Number(x.trim())).filter(x => Number.isInteger(x) && x >= 0 && x <= 23);
+}
+
+function readUiState() {
+  try {
+    const raw = localStorage.getItem(UI_STATE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeUiState() {
+  const next = {
+    tokenInput: els.tokenInput?.value || "",
+    notifyBotToken: els.notifyBotToken?.value || "",
+    notifyChatId: els.notifyChatId?.value || "",
+    notifyEnabled: Boolean(els.notifyEnabled?.checked),
+    province: els.province?.value || "",
+    district: els.district?.value || "",
+    clinic: els.clinic?.value || "",
+    hospital: els.hospital?.value || "",
+    place: els.place?.value || "",
+    doctor: els.doctor?.value || "",
+    startDate: els.startDate?.value || "",
+    endDate: els.endDate?.value || "",
+    includeHourStart: els.includeHourStart?.value || "",
+    includeHourEnd: els.includeHourEnd?.value || "",
+    excludeHours: els.excludeHours?.value || "",
+    autoInterval: els.autoInterval?.value || "",
+    autoScanActive: Boolean(state.autoTimer),
+  };
+
+  persistedUiState = next;
+  try {
+    localStorage.setItem(UI_STATE_KEY, JSON.stringify(next));
+  } catch {
+    // localStorage kullanilamiyorsa uygulama normal sekilde devam etsin.
+  }
+}
+
+function setSelectFromState(selectEl, key) {
+  const wanted = persistedUiState[key];
+  if (!selectEl || !wanted) return;
+
+  const exists = Array.from(selectEl.options).some(o => o.value === String(wanted));
+  if (exists) {
+    selectEl.value = String(wanted);
+  }
+}
+
+function restoreUiState() {
+  persistedUiState = readUiState();
+  shouldResumeAutoScan = Boolean(persistedUiState.autoScanActive);
+
+  if (els.tokenInput && typeof persistedUiState.tokenInput === "string") {
+    els.tokenInput.value = persistedUiState.tokenInput;
+  }
+  if (els.notifyBotToken && typeof persistedUiState.notifyBotToken === "string") {
+    els.notifyBotToken.value = persistedUiState.notifyBotToken;
+  }
+  if (els.notifyChatId && typeof persistedUiState.notifyChatId === "string") {
+    els.notifyChatId.value = persistedUiState.notifyChatId;
+  }
+  if (els.notifyEnabled) {
+    els.notifyEnabled.checked = Boolean(persistedUiState.notifyEnabled);
+  }
+  if (els.startDate && typeof persistedUiState.startDate === "string") {
+    els.startDate.value = persistedUiState.startDate;
+  }
+  if (els.endDate && typeof persistedUiState.endDate === "string") {
+    els.endDate.value = persistedUiState.endDate;
+  }
+  if (els.includeHourStart && typeof persistedUiState.includeHourStart === "string") {
+    els.includeHourStart.value = persistedUiState.includeHourStart;
+  }
+  if (els.includeHourEnd && typeof persistedUiState.includeHourEnd === "string") {
+    els.includeHourEnd.value = persistedUiState.includeHourEnd;
+  }
+  if (els.excludeHours && typeof persistedUiState.excludeHours === "string") {
+    els.excludeHours.value = persistedUiState.excludeHours;
+  }
+  if (els.autoInterval && typeof persistedUiState.autoInterval === "string") {
+    els.autoInterval.value = persistedUiState.autoInterval;
+  }
+}
+
+function bindUiPersistence() {
+  [
+    els.tokenInput,
+    els.notifyBotToken,
+    els.notifyChatId,
+    els.notifyEnabled,
+    els.province,
+    els.district,
+    els.clinic,
+    els.hospital,
+    els.place,
+    els.doctor,
+    els.startDate,
+    els.endDate,
+    els.includeHourStart,
+    els.includeHourEnd,
+    els.excludeHours,
+    els.autoInterval,
+  ]
+    .filter(Boolean)
+    .forEach(el => {
+      el.addEventListener("input", writeUiState);
+      el.addEventListener("change", writeUiState);
+    });
 }
 
 function setupHourRangeSelectors() {
@@ -208,12 +322,16 @@ async function loadNotificationConfig() {
     if (els.notifyEnabled) {
       els.notifyEnabled.checked = Boolean(data?.enabled);
     }
-    if (els.notifyBotToken) {
-      els.notifyBotToken.value = cleanValue(data?.telegramBotToken);
+    const serverToken = cleanValue(data?.telegramBotToken);
+    const serverChatId = cleanValue(data?.telegramChatId);
+
+    if (els.notifyBotToken && serverToken) {
+      els.notifyBotToken.value = serverToken;
     }
-    if (els.notifyChatId) {
-      els.notifyChatId.value = cleanValue(data?.telegramChatId);
+    if (els.notifyChatId && serverChatId) {
+      els.notifyChatId.value = serverChatId;
     }
+    writeUiState();
   } catch {
     // Notification config load failure should not block main flow.
   }
@@ -228,6 +346,9 @@ async function saveNotificationConfig() {
       TelegramChatId: (els.notifyChatId?.value || "").trim()
     })
   });
+  
+  // Sunucuya kayit sonrasi tarayicidaki alanlari da kalici hale getir.
+  writeUiState();
 }
 
 async function sendNotification(message) {
@@ -265,6 +386,9 @@ function formatDateInputValue(date) {
 
 function applyDateConstraints() {
   const today = formatDateInputValue(new Date());
+  
+  window.addEventListener("pagehide", writeUiState);
+  window.addEventListener("beforeunload", writeUiState);
 
   els.startDate.min = today;
   if (!els.startDate.value || els.startDate.value < today) {
@@ -349,24 +473,36 @@ function normalizeSlots(rawSlots) {
 // ─── Meta loaders ─────────────────────────────────────────────────────────────
 async function loadProvinces() {
   toOptions(els.province, await api("/api/meta/provinces"));
+  setSelectFromState(els.province, "province");
 }
 async function loadDistricts() {
   toOptions(els.district, await api(`/api/meta/districts/${Number(els.province.value)}`), true);
+  setSelectFromState(els.district, "district");
 }
 async function loadClinics() {
   toOptions(els.clinic, await api(`/api/meta/clinics?provinceId=${els.province.value}&districtId=${els.district.value}`));
+  setSelectFromState(els.clinic, "clinic");
 }
 async function loadHospitals() {
   const hospitals = await api(`/api/meta/hospitals?provinceId=${els.province.value}&districtId=${els.district.value}&clinicId=${els.clinic.value}`);
   state.hospitals = hospitals;
   toOptions(els.hospital, hospitals, true);
+  setSelectFromState(els.hospital, "hospital");
 }
 async function loadPlacesAndDoctors() {
   const hId = Number(els.hospital.value);
-  if (hId <= 0) { toOptions(els.place, [], true); toOptions(els.doctor, [], true); return; }
+  if (hId <= 0) {
+    toOptions(els.place, [], true);
+    toOptions(els.doctor, [], true);
+    setSelectFromState(els.place, "place");
+    setSelectFromState(els.doctor, "doctor");
+    return;
+  }
   const anaKurumId = state.hospitals.find(h => (h.Value ?? h.value) === hId)?.Value ?? hId;
   toOptions(els.place,  await api(`/api/meta/places?hospitalId=${hId}&clinicId=${els.clinic.value}`), true);
   toOptions(els.doctor, await api(`/api/meta/doctors?anaKurumId=${anaKurumId}&hospitalId=${hId}&clinicId=${els.clinic.value}`), true);
+  setSelectFromState(els.place, "place");
+  setSelectFromState(els.doctor, "doctor");
 }
 
 // ─── Slot rendering ───────────────────────────────────────────────────────────
@@ -502,6 +638,7 @@ function startAutoScan() {
   els.scanStatus.classList.remove("hidden");
   tick();
   state.autoTimer = setInterval(tick, Number(els.autoInterval.value) * 1000);
+  writeUiState();
 }
 
 function stopAutoScan() {
@@ -510,6 +647,14 @@ function stopAutoScan() {
   els.btnAutoStart.textContent = "▶ Otomatik Başlat";
   els.btnAutoStart.classList.remove("active");
   els.scanStatus.classList.add("hidden");
+  writeUiState();
+}
+
+function resumeAutoScanIfNeeded() {
+  if (!shouldResumeAutoScan) return;
+
+  shouldResumeAutoScan = false;
+  startAutoScan();
 }
 
 // ─── Event bindings ───────────────────────────────────────────────────────────
@@ -522,6 +667,7 @@ els.btnImportToken.addEventListener("click", async () => {
     setStatus(els.loginStatus, "Oturum aktif. İl seçiminden başlayabilirsiniz.", "success");
     setSessionBadge(true);
     await loadProvinces();
+    writeUiState();
   } catch (err) {
     setStatus(els.loginStatus, err.message, "error");
     setSessionBadge(false);
@@ -534,6 +680,10 @@ els.btnLogout.addEventListener("click", async () => {
     setStatus(els.loginStatus, "Oturum temizlendi.");
     setSessionBadge(false);
     stopAutoScan();
+    if (els.tokenInput) {
+      els.tokenInput.value = "";
+    }
+    writeUiState();
   } catch (err) {
     setStatus(els.loginStatus, err.message, "error");
   }
@@ -594,6 +744,9 @@ applyDateConstraints();
 attachDatePickerBehavior(els.startDate);
 attachDatePickerBehavior(els.endDate);
 setupHourRangeSelectors();
+restoreUiState();
+bindUiPersistence();
 loadNotificationConfig();
 setupPwaInstall();
 registerServiceWorker();
+resumeAutoScanIfNeeded();
