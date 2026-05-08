@@ -1,5 +1,5 @@
 // ─── State ───────────────────────────────────────────────────────────────────
-const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0 };
+const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null };
 
 // ─── Element refs ─────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -14,6 +14,7 @@ const els = {
   notifyEnabled:  $("notifyEnabled"),
   btnNotifySave:  $("btnNotifySave"),
   btnNotifyTest:  $("btnNotifyTest"),
+  btnInstallApp:  $("btnInstallApp"),
   notifyStatus:   $("notifyStatus"),
   province:       $("province"),
   district:       $("district"),
@@ -378,14 +379,53 @@ function renderSlots(slots) {
   slots.forEach(slot => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td>${slot.BaslangicZamani || "-"}</td>
-      <td>${slot.HekimAdi || "-"}</td>
-      <td>${slot.MuayeneYeriAdi || "-"}</td>
-      <td>${slot.KurumAdi || "-"}</td>
-      <td><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;">Al</button></td>
+      <td data-label="Tarih / Saat">${slot.BaslangicZamani || "-"}</td>
+      <td data-label="Doktor">${slot.HekimAdi || "-"}</td>
+      <td data-label="Muayene Yeri">${slot.MuayeneYeriAdi || "-"}</td>
+      <td data-label="Kurum">${slot.KurumAdi || "-"}</td>
+      <td data-label="Randevu"><button class="btn btn-primary" style="padding:6px 14px;font-size:12px;">Al</button></td>
     `;
     tr.querySelector("button").addEventListener("click", () => bookSlot(slot));
     els.slotBody.appendChild(tr);
+  });
+}
+
+function setupPwaInstall() {
+  if (!els.btnInstallApp) return;
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    state.installPrompt = event;
+    els.btnInstallApp.classList.remove("hidden");
+  });
+
+  els.btnInstallApp.addEventListener("click", async () => {
+    if (!state.installPrompt) return;
+
+    try {
+      await state.installPrompt.prompt();
+      await state.installPrompt.userChoice;
+    } finally {
+      state.installPrompt = null;
+      els.btnInstallApp.classList.add("hidden");
+    }
+  });
+
+  window.addEventListener("appinstalled", () => {
+    state.installPrompt = null;
+    els.btnInstallApp.classList.add("hidden");
+  });
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+
+  window.addEventListener("load", async () => {
+    try {
+      await navigator.serviceWorker.register("/sw.js");
+    } catch {
+      // PWA service worker kaydi basarisiz olursa uygulama normal calismaya devam eder.
+    }
   });
 }
 
@@ -555,3 +595,5 @@ attachDatePickerBehavior(els.startDate);
 attachDatePickerBehavior(els.endDate);
 setupHourRangeSelectors();
 loadNotificationConfig();
+setupPwaInstall();
+registerServiceWorker();

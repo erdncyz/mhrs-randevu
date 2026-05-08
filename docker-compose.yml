@@ -1,0 +1,12 @@
+services:
+  mhrs-web:
+    container_name: mhrs-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5088:8080"
+    restart: unless-stopped
+    environment:
+      TELEGRAM_API_TOKEN: ${TELEGRAM_API_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}

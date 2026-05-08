@@ -1,0 +1,18 @@
+{
+  "name": "MHRS Otomatik Randevu",
+  "short_name": "MHRS Auto",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "lang": "tr",
+  "description": "MHRS token ice aktarma, slot arama ve randevu alma arayuzu.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

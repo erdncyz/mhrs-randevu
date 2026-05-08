@@ -32,6 +32,71 @@ Kurulum dogrulamasi:
 dotnet --version
 ```
 
+## Docker ile Calistirma (Onerilen)
+
+Ayni sunucuda baska projeler de olacaksa Docker ile izole sekilde calistirmak daha guvenlidir.
+
+### Ubuntu Uzerinde Docker Kurulumu
+
+```bash
+sudo apt update
+sudo apt install -y docker.io docker-compose-plugin
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+```
+
+Not:
+
+- `usermod` komutundan sonra cikis-giris yapman (veya yeni SSH oturumu acman) gerekir.
+- Docker servisinin calistigini su komutla dogrulayabilirsin: `docker --version`
+
+1. Proje klasorune gir:
+
+```bash
+cd /path/to/MHRS-OtomatikRandevu
+```
+
+2. Konteyneri build edip baslat:
+
+```bash
+docker compose up -d --build
+```
+
+3. Loglari izle:
+
+```bash
+docker compose logs -f
+```
+
+4. Tarayicidan ac:
+
+```text
+http://SUNUCU_IP:5088
+```
+
+5. Durdur:
+
+```bash
+docker compose down
+```
+
+6. Sunucu yeniden basladiginda otomatik acilma davranisi:
+
+- `restart: unless-stopped` oldugu icin konteyner, Docker servisi kalkinca otomatik tekrar baslar.
+
+Notlar:
+
+- Konteyner ici port 8080, disariya 5088 olarak acilir (`5088:8080`).
+- AWS Security Group icin inbound TCP 5088 acik olmalidir.
+- Sunucu firewall aciksa 5088/tcp izni verilmelidir.
+
+### Mobil (PWA) Kullanim
+
+- Uygulama mobil responsive olacak sekilde duzenlenmistir.
+- Destekleyen tarayicilarda "Uygulamayi Yukle" butonuyla ana ekrana eklenebilir.
+- PWA kurulumu icin uygulamayi HTTPS veya localhost uzerinden acman gerekir.
+- Android Chrome'da adres cubugundan "Install app" veya "Uygulamayi yukle" secenegi de gorunebilir.
+
 ## Nasil Calistirilir
 
 1. Proje klasorune gir:
