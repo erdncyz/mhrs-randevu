@@ -1,5 +1,5 @@
 // ─── State ───────────────────────────────────────────────────────────────────
-const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null };
+const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null, sessionReady: false };
 const UI_STATE_KEY = "mhrs.ui.state.v1";
 
 // ─── Element refs ─────────────────────────────────────────────────────────────
@@ -319,21 +319,61 @@ async function loadNotificationConfig() {
       return text.toUpperCase().startsWith("BURAYA_") ? "" : text;
     };
 
-    if (els.notifyEnabled) {
+    const hasLocalNotifyEnabled = Object.prototype.hasOwnProperty.call(persistedUiState, "notifyEnabled");
+    const hasLocalNotifyToken = Boolean((persistedUiState.notifyBotToken || "").trim());
+    const hasLocalNotifyChatId = Boolean((persistedUiState.notifyChatId || "").trim());
+
+    if (els.notifyEnabled && !hasLocalNotifyEnabled) {
       els.notifyEnabled.checked = Boolean(data?.enabled);
     }
     const serverToken = cleanValue(data?.telegramBotToken);
     const serverChatId = cleanValue(data?.telegramChatId);
 
-    if (els.notifyBotToken && serverToken) {
+    if (els.notifyBotToken && serverToken && !hasLocalNotifyToken) {
       els.notifyBotToken.value = serverToken;
     }
-    if (els.notifyChatId && serverChatId) {
+    if (els.notifyChatId && serverChatId && !hasLocalNotifyChatId) {
       els.notifyChatId.value = serverChatId;
     }
     writeUiState();
   } catch {
     // Notification config load failure should not block main flow.
+  }
+}
+
+async function restoreSessionFromStoredToken() {
+  const token = (els.tokenInput?.value || "").trim();
+  if (!token) {
+    setSessionBadge(false);
+    state.sessionReady = false;
+    return false;
+  }
+
+  try {
+    await api("/api/auth/import-token", {
+      method: "POST",
+      body: JSON.stringify({ Token: token })
+    });
+
+    setSessionBadge(true);
+    setStatus(els.loginStatus, "Oturum aktif. Il seciminden baslayabilirsiniz.", "success");
+    state.sessionReady = true;
+
+    await loadProvinces();
+
+    if (els.province?.value) {
+      await loadDistricts();
+      await loadClinics();
+      await loadHospitals();
+      await loadPlacesAndDoctors();
+    }
+
+    writeUiState();
+    return true;
+  } catch {
+    setSessionBadge(false);
+    state.sessionReady = false;
+    return false;
   }
 }
 
@@ -631,6 +671,10 @@ async function tick() {
 
 function startAutoScan() {
   if (state.autoTimer) return;
+  if (!state.sessionReady) {
+    setStatus(els.searchStatus, "Otomatik tarama icin once oturum acik olmali.", "error");
+    return;
+  }
   state.scanCount = 0;
   els.autoInterval.disabled = true;
   els.btnAutoStart.textContent = "■ Durdur";
@@ -652,6 +696,7 @@ function stopAutoScan() {
 
 function resumeAutoScanIfNeeded() {
   if (!shouldResumeAutoScan) return;
+  if (!state.sessionReady) return;
 
   shouldResumeAutoScan = false;
   startAutoScan();
@@ -666,11 +711,13 @@ els.btnImportToken.addEventListener("click", async () => {
     });
     setStatus(els.loginStatus, "Oturum aktif. İl seçiminden başlayabilirsiniz.", "success");
     setSessionBadge(true);
+    state.sessionReady = true;
     await loadProvinces();
     writeUiState();
   } catch (err) {
     setStatus(els.loginStatus, err.message, "error");
     setSessionBadge(false);
+    state.sessionReady = false;
   }
 });
 
@@ -679,6 +726,7 @@ els.btnLogout.addEventListener("click", async () => {
     await api("/api/auth/logout", { method: "POST" });
     setStatus(els.loginStatus, "Oturum temizlendi.");
     setSessionBadge(false);
+    state.sessionReady = false;
     stopAutoScan();
     if (els.tokenInput) {
       els.tokenInput.value = "";
@@ -749,4 +797,10 @@ bindUiPersistence();
 loadNotificationConfig();
 setupPwaInstall();
 registerServiceWorker();
-resumeAutoScanIfNeeded();
+
+async function bootstrap() {
+  await restoreSessionFromStoredToken();
+  resumeAutoScanIfNeeded();
+}
+
+bootstrap();
