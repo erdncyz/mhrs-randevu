@@ -28,3 +28,4 @@
 /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.MHRS-OtomatikRandevu.props
 /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/obj/Debug/net8.0/staticwebassets.pack.json
 /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/obj/Debug/net8.0/scopedcss/bundle/MHRS-OtomatikRandevu.styles.css
+/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/obj/Debug/net8.0/MHRS-OtomatikRandevu.sourcelink.json

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MHRS-OtomatikRandevu")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b44c235a288a1e1476da90e50d18a2fe527836a7")]
 [assembly: System.Reflection.AssemblyProductAttribute("MHRS-OtomatikRandevu")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MHRS-OtomatikRandevu")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

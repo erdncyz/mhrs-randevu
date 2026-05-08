@@ -5,12 +5,24 @@
       "PackagePath": "staticwebassets/app.js"
     },
     {
+      "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/icon.svg",
+      "PackagePath": "staticwebassets/icon.svg"
+    },
+    {
       "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/index.html",
       "PackagePath": "staticwebassets/index.html"
     },
     {
+      "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/manifest.webmanifest",
+      "PackagePath": "staticwebassets/manifest.webmanifest"
+    },
+    {
       "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/styles.css",
       "PackagePath": "staticwebassets/styles.css"
+    },
+    {
+      "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/sw.js",
+      "PackagePath": "staticwebassets/sw.js"
     },
     {
       "Id": "obj/Debug/net8.0/staticwebassets/msbuild.MHRS-OtomatikRandevu.Microsoft.AspNetCore.StaticWebAssets.props",
