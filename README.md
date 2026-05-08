@@ -62,6 +62,33 @@ cd /path/to/MHRS-OtomatikRandevu
 docker compose up -d --build
 ```
 
+Alternatif komutlar:
+
+- Sadece image build almak icin:
+
+```bash
+docker compose build
+```
+
+- Build sonrasi ayaga kaldirmak icin:
+
+```bash
+docker compose up -d
+```
+
+- Compose yerine dogrudan Docker ile build/run:
+
+```bash
+docker build -t mhrs-web:latest .
+docker run -d --name mhrs-web -p 5088:8080 mhrs-web:latest
+```
+
+- Izin hatasi (permission denied) alirsan gecici olarak `sudo` ile calistir:
+
+```bash
+sudo docker compose up -d --build
+```
+
 3. Loglari izle:
 
 ```bash
