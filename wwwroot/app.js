@@ -1,5 +1,5 @@
 // ─── State ───────────────────────────────────────────────────────────────────
-const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null, sessionReady: false };
+const state = { hospitals: [], slots: [], autoTimer: null, scanCount: 0, installPrompt: null, sessionReady: false, scanWorker: null };
 const UI_STATE_KEY = "mhrs.ui.state.v1";
 
 // ─── Element refs ─────────────────────────────────────────────────────────────
@@ -91,7 +91,7 @@ function writeUiState() {
     includeHourEnd: els.includeHourEnd?.value || "",
     excludeHours: els.excludeHours?.value || "",
     autoInterval: els.autoInterval?.value || "",
-    autoScanActive: Boolean(state.autoTimer),
+    autoScanActive: Boolean(state.autoTimer) || Boolean(state.scanWorker),
   };
 
   persistedUiState = next;
@@ -669,24 +669,66 @@ async function tick() {
   }
 }
 
+function createScanWorker() {
+  if (!window.Worker) return null;
+
+  try {
+    const worker = new Worker("/scan-worker.js");
+    worker.addEventListener("message", event => {
+      if (event.data?.type === "tick" && state.autoTimer) {
+        tick();
+      }
+    });
+    return worker;
+  } catch {
+    return null;
+  }
+}
+
 function startAutoScan() {
   if (state.autoTimer) return;
   if (!state.sessionReady) {
     setStatus(els.searchStatus, "Otomatik tarama icin once oturum acik olmali.", "error");
     return;
   }
+
   state.scanCount = 0;
+  state.autoTimer = true;
   els.autoInterval.disabled = true;
   els.btnAutoStart.textContent = "■ Durdur";
   els.btnAutoStart.classList.add("active");
   els.scanStatus.classList.remove("hidden");
+
   tick();
-  state.autoTimer = setInterval(tick, Number(els.autoInterval.value) * 1000);
+
+  const intervalMs = Number(els.autoInterval.value) * 1000;
+  if (window.Worker) {
+    state.scanWorker = createScanWorker();
+    if (state.scanWorker) {
+      state.scanWorker.postMessage({ type: "start", intervalMs });
+    } else {
+      state.autoTimer = setInterval(tick, intervalMs);
+    }
+  } else {
+    state.autoTimer = setInterval(tick, intervalMs);
+  }
+
   writeUiState();
 }
 
 function stopAutoScan() {
-  if (state.autoTimer) { clearInterval(state.autoTimer); state.autoTimer = null; }
+  if (state.scanWorker) {
+    state.scanWorker.postMessage({ type: "stop" });
+    state.scanWorker.terminate();
+    state.scanWorker = null;
+    state.autoTimer = null;
+  } else if (state.autoTimer && state.autoTimer !== true) {
+    clearInterval(state.autoTimer);
+    state.autoTimer = null;
+  } else {
+    state.autoTimer = null;
+  }
+
   els.autoInterval.disabled = false;
   els.btnAutoStart.textContent = "▶ Otomatik Başlat";
   els.btnAutoStart.classList.remove("active");

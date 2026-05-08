@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets/manifest.webmanifest"
     },
     {
+      "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/scan-worker.js",
+      "PackagePath": "staticwebassets/scan-worker.js"
+    },
+    {
       "Id": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/styles.css",
       "PackagePath": "staticwebassets/styles.css"
     },

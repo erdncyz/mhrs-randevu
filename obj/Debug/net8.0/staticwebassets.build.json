@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "nSYpSVfMal6yB7yiC4roytF9Z+4Pg5LAifkQhGRsBBQ=",
+  "Hash": "+7hq/LigMchvncvv1hhEuytBR4Y5paVZ/mrGW3xaaBw=",
   "Source": "MHRS-OtomatikRandevu",
   "BasePath": "_content/MHRS-OtomatikRandevu",
   "Mode": "Default",
@@ -91,6 +91,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/manifest.webmanifest"
+    },
+    {
+      "Identity": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/scan-worker.js",
+      "SourceId": "MHRS-OtomatikRandevu",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/",
+      "BasePath": "_content/MHRS-OtomatikRandevu",
+      "RelativePath": "scan-worker.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/scan-worker.js"
     },
     {
       "Identity": "/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/wwwroot/styles.css",
