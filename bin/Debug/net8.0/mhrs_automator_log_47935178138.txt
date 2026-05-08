@@ -1,0 +1,125 @@
+2026-05-08 15:14:55.120 [INFO] - Logger, T.C. kimlik numarasına özel loglama yapacak şekilde ayarlandı. Log dosyası: /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/bin/Debug/net8.0/mhrs_automator_log_47935178138.txt
+2026-05-08 15:14:55.159 [OUTPUT] - Giriş yapmak için şifrenizi giriniz.
+2026-05-08 15:14:55.160 [PROMPT] - Şifre: 
+2026-05-08 15:15:06.943 [INPUT] - **********
+2026-05-08 15:15:06.944 [OUTPUT] - Giriş Yapılıyor...
+2026-05-08 15:15:06.949 [OUTPUT] - Token yenileniyor (forceRefresh)...
+2026-05-08 15:15:06.975 [API_REQUEST] - Login Request to /api/vatandas/login
+{
+  "KullaniciAdi": "47935178138",
+  "Parola": "**********",
+  "IslemKanali": "VATANDAS_WEB",
+  "GizlilikSozlesmeOnay": true
+}
+2026-05-08 15:15:07.433 [ERROR] - Login API hatası: Parola alanı en az 8 en fazla 16 karakter olup, en az 1 büyük harf ve rakam içermelidir. (VLD1011) (Kod: VLD1011)
+2026-05-08 15:15:07.434 [API_RESPONSE_FAIL] - Login Yanıtı (Detay)
+{
+  "success": false,
+  "infos": [],
+  "warnings": [],
+  "errors": [
+    {
+      "kodu": "VLD1011",
+      "mesaj": "Parola alanı en az 8 en fazla 16 karakter olup, en az 1 büyük harf ve rakam içermelidir. (VLD1011)"
+    }
+  ],
+  "lang": "tr-TR"
+}
+2026-05-08 15:15:10.436 [ERROR] - Giriş başarısız oldu. Bilgiler yeniden isteniyor.
+2026-05-08 15:15:13.438 [PROMPT] - TC: 
+2026-05-08 15:15:13.439 [INPUT] - 
+2026-05-08 15:15:13.440 [OUTPUT] - Oturum kapatılmadı, token saklandı.
+2026-05-08 15:15:13.440 [INFO] - ================ UYGULAMA KULLANICI TARAFINDAN SONLANDIRILDI ================
+2026-05-08 15:15:26.931 [INFO] - Logger, T.C. kimlik numarasına özel loglama yapacak şekilde ayarlandı. Log dosyası: /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/bin/Debug/net8.0/mhrs_automator_log_47935178138.txt
+2026-05-08 15:15:26.967 [OUTPUT] - Giriş yapmak için şifrenizi giriniz.
+2026-05-08 15:15:26.968 [PROMPT] - Şifre: 
+2026-05-08 15:15:33.081 [INPUT] - **********
+2026-05-08 15:15:33.081 [OUTPUT] - Giriş Yapılıyor...
+2026-05-08 15:15:33.088 [OUTPUT] - Token yenileniyor (forceRefresh)...
+2026-05-08 15:15:33.116 [API_REQUEST] - Login Request to /api/vatandas/login
+{
+  "KullaniciAdi": "47935178138",
+  "Parola": "**********",
+  "IslemKanali": "VATANDAS_WEB",
+  "GizlilikSozlesmeOnay": true
+}
+2026-05-08 15:15:33.293 [ERROR] - Login API hatası: T.C. Kimlik Numarası ve/veya parola bilgisi hatalıdır. Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz (VT2003). (Kod: VT2003)
+2026-05-08 15:15:33.294 [API_RESPONSE_FAIL] - Login Yanıtı (Detay)
+{
+  "success": false,
+  "infos": [],
+  "warnings": [],
+  "errors": [
+    {
+      "kodu": "VT2003",
+      "mesaj": "T.C. Kimlik Numarası ve/veya parola bilgisi hatalıdır. Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz (VT2003)."
+    }
+  ],
+  "lang": "tr-TR"
+}
+2026-05-08 15:15:36.296 [ERROR] - Giriş başarısız oldu. Bilgiler yeniden isteniyor.
+2026-05-08 15:15:39.298 [PROMPT] - TC: 
+2026-05-08 15:16:51.193 [INPUT] - 47935178138
+2026-05-08 15:16:51.193 [INFO] - Logger, T.C. kimlik numarasına özel loglama yapacak şekilde ayarlandı. Log dosyası: /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/bin/Debug/net8.0/mhrs_automator_log_47935178138.txt
+2026-05-08 15:16:51.194 [OUTPUT] - Giriş yapmak için şifrenizi giriniz.
+2026-05-08 15:16:51.194 [PROMPT] - Şifre: 
+2026-05-08 15:17:02.404 [INPUT] - **********
+2026-05-08 15:17:02.404 [OUTPUT] - Giriş Yapılıyor...
+2026-05-08 15:17:02.405 [OUTPUT] - Token yenileniyor (forceRefresh)...
+2026-05-08 15:17:02.405 [API_REQUEST] - Login Request to /api/vatandas/login
+{
+  "KullaniciAdi": "47935178138",
+  "Parola": "**********",
+  "IslemKanali": "VATANDAS_WEB",
+  "GizlilikSozlesmeOnay": true
+}
+2026-05-08 15:17:02.530 [ERROR] - Login API hatası: Parola alanı en az 8 en fazla 16 karakter olup, en az 1 büyük harf ve rakam içermelidir. (VLD1011) (Kod: VLD1011)
+2026-05-08 15:17:02.530 [API_RESPONSE_FAIL] - Login Yanıtı (Detay)
+{
+  "success": false,
+  "infos": [],
+  "warnings": [],
+  "errors": [
+    {
+      "kodu": "VLD1011",
+      "mesaj": "Parola alanı en az 8 en fazla 16 karakter olup, en az 1 büyük harf ve rakam içermelidir. (VLD1011)"
+    }
+  ],
+  "lang": "tr-TR"
+}
+2026-05-08 15:17:05.532 [ERROR] - Giriş başarısız oldu. Bilgiler yeniden isteniyor.
+2026-05-08 15:17:08.534 [PROMPT] - TC: 
+2026-05-08 15:17:15.224 [INPUT] - 47935178138
+2026-05-08 15:17:15.224 [INFO] - Logger, T.C. kimlik numarasına özel loglama yapacak şekilde ayarlandı. Log dosyası: /Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/bin/Debug/net8.0/mhrs_automator_log_47935178138.txt
+2026-05-08 15:17:15.225 [OUTPUT] - Giriş yapmak için şifrenizi giriniz.
+2026-05-08 15:17:15.225 [PROMPT] - Şifre: 
+2026-05-08 15:17:29.949 [INPUT] - **********
+2026-05-08 15:17:29.950 [OUTPUT] - Giriş Yapılıyor...
+2026-05-08 15:17:29.950 [OUTPUT] - Token yenileniyor (forceRefresh)...
+2026-05-08 15:17:29.951 [API_REQUEST] - Login Request to /api/vatandas/login
+{
+  "KullaniciAdi": "47935178138",
+  "Parola": "**********",
+  "IslemKanali": "VATANDAS_WEB",
+  "GizlilikSozlesmeOnay": true
+}
+2026-05-08 15:17:29.999 [ERROR] - Login API hatası: T.C. Kimlik Numarası ve/veya parola bilgisi hatalıdır. Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz (VT2003). (Kod: VT2003)
+2026-05-08 15:17:30.000 [API_RESPONSE_FAIL] - Login Yanıtı (Detay)
+{
+  "success": false,
+  "infos": [],
+  "warnings": [],
+  "errors": [
+    {
+      "kodu": "VT2003",
+      "mesaj": "T.C. Kimlik Numarası ve/veya parola bilgisi hatalıdır. Lütfen bilgilerinizi kontrol ederek tekrar deneyiniz (VT2003)."
+    }
+  ],
+  "lang": "tr-TR"
+}
+2026-05-08 15:17:33.001 [ERROR] - Giriş başarısız oldu. Bilgiler yeniden isteniyor.
+2026-05-08 15:17:36.003 [PROMPT] - TC: 
+2026-05-08 15:18:27.264 [OUTPUT] - Oturum kapatılmadı, token saklandı.
+2026-05-08 15:18:27.264 [INFO] - ================ UYGULAMA KULLANICI TARAFINDAN SONLANDIRILDI ================
+2026-05-08 15:18:27.378 [OUTPUT] - Oturum kapatılmadı, token saklandı.
+2026-05-08 15:18:27.379 [INFO] - ================ UYGULAMA KULLANICI TARAFINDAN SONLANDIRILDI ================

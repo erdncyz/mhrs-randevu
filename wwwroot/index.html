@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MHRS Auto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="topbar-logo">MHRS<span class="logo-accent">Auto</span></span>
+    <span id="sessionBadge" class="badge badge-inactive">● Oturum Yok</span>
+  </header>
+
+  <main class="shell">
+
+    <section class="card" id="loginCard">
+      <div class="card-title-row">
+        <h2>Oturum</h2>
+        <a class="btn btn-outline" href="https://mhrs.gov.tr/vatandas/#/" target="_blank" rel="noreferrer">MHRS'i Aç ↗</a>
+      </div>
+      <label class="field-label">Authorization Bearer JWT
+        <textarea id="tokenInput" rows="3" placeholder="Bearer eyJhbGciOi..."></textarea>
+      </label>
+      <div class="row mt-8">
+        <button id="btnImportToken" class="btn btn-primary">İçe Aktar</button>
+        <button id="btnLogout" class="btn btn-ghost">Oturumu Temizle</button>
+      </div>
+      <details class="helper-box">
+        <summary>Token nasıl alınır?</summary>
+        <ol>
+          <li>Resmi MHRS'e giriş yap.</li>
+          <li>F12 → Network sekmesi.</li>
+          <li>prd.mhrs.gov.tr'a giden bir isteği seç.</li>
+          <li>Request Headers → <code>Authorization</code> satırını kopyala.</li>
+        </ol>
+        <pre>Authorization: Bearer eyJhbGciOi...</pre>
+      </details>
+      <p id="loginStatus" class="status-text"></p>
+    </section>
+
+    <section class="card" id="notifyCard">
+      <h2>Bildirim</h2>
+      <div class="grid-2">
+        <label class="field-label">Telegram Bot Token
+          <input id="notifyBotToken" type="password" placeholder="BotFather token" />
+        </label>
+        <label class="field-label">Telegram Chat ID
+          <input id="notifyChatId" type="text" placeholder="Orn: 123456789" />
+        </label>
+      </div>
+      <div class="row mt-10">
+        <label class="toggle-label">
+          <input id="notifyEnabled" type="checkbox" />
+          <span>Uygun slot bulunca mesaj gonder</span>
+        </label>
+      </div>
+      <div class="row mt-8">
+        <button id="btnNotifySave" class="btn btn-outline">Ayarlari Kaydet</button>
+        <button id="btnNotifyTest" class="btn btn-ghost">Test Mesaji Gonder</button>
+      </div>
+      <p id="notifyStatus" class="status-text"></p>
+
+      <details class="helper-box">
+        <summary>Telegram Bot Token ve Chat ID nasil alinir?</summary>
+        <ol>
+          <li>Telegram'da <code>@BotFather</code> hesabini ac.</li>
+          <li><code>/newbot</code> yazarak yeni bot olustur ve BotFather'in verdigi tokeni kopyala.</li>
+          <li>Olusturdugun botu acip <code>Start</code> tusuna basarak bottan bir mesaj gonder.</li>
+          <li>Tarayicida su adrese git (TOKEN yerine kendi bot tokenini yaz):</li>
+        </ol>
+        <pre>https://api.telegram.org/botTOKEN/getUpdates</pre>
+        <ol start="5">
+          <li>Donen JSON icinde <code>chat</code> nesnesindeki <code>id</code> degeri senin Chat ID'n olur.</li>
+          <li>Bu panelde Token ve Chat ID alanlarini doldur, sonra <strong>Ayarlari Kaydet</strong> ve <strong>Test Mesaji Gonder</strong> bas.</li>
+        </ol>
+        <p class="hint">Not: Chat ID genelde sayisal olur (ornek: <code>123456789</code>).</p>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Filtreler</h2>
+      <div class="grid-3">
+        <label class="field-label">İl<select id="province"></select></label>
+        <label class="field-label">İlçe<select id="district"></select></label>
+        <label class="field-label">Klinik<select id="clinic"></select></label>
+        <label class="field-label">Hastane<select id="hospital"></select></label>
+        <label class="field-label">Muayene Yeri<select id="place"></select></label>
+        <label class="field-label">Doktor<select id="doctor"></select></label>
+      </div>
+      <div class="grid-2 mt-10">
+        <label class="field-label">Başlangıç Tarihi<input id="startDate" type="date" /></label>
+        <label class="field-label">Bitiş Tarihi<input id="endDate" type="date" /></label>
+        <label class="field-label">Dahil Saat Aralığı
+          <div class="hour-range">
+            <select id="includeHourStart"></select>
+            <select id="includeHourEnd"></select>
+          </div>
+        </label>
+        <label class="field-label">Hariç Saatler<input id="excludeHours" type="text" placeholder="8,17,18" /></label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Otomatik Tarama</h2>
+      <div class="scan-bar">
+        <label class="field-label inline-label">Aralık
+          <select id="autoInterval">
+            <option value="15">15 saniye</option>
+            <option value="30" selected>30 saniye</option>
+            <option value="60">1 dakika</option>
+            <option value="120">2 dakika</option>
+          </select>
+        </label>
+        <button id="btnAutoStart" class="btn btn-success">▶ Otomatik Başlat</button>
+        <button id="btnSearch" class="btn btn-ghost">Bir Kez Ara</button>
+      </div>
+      <div id="scanStatus" class="scan-status hidden">
+        <span class="pulse"></span>
+        <span id="scanStatusText">Taranıyor...</span>
+      </div>
+      <p id="searchStatus" class="status-text"></p>
+    </section>
+
+    <section class="card">
+      <h2>Sonuçlar</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tarih / Saat</th>
+              <th>Doktor</th>
+              <th>Muayene Yeri</th>
+              <th>Kurum</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="slotBody">
+            <tr><td colspan="5" class="empty-row">Henüz arama yapılmadı</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
