@@ -15,6 +15,8 @@ namespace MHRS_OtomatikRandevu.Services
 {
     public class ClientService : IClientService
     {
+        public static Action<string>? NetworkLogHook { get; set; }
+
         private readonly HttpClient _httpClient;
 
         public ClientService()
@@ -32,9 +34,11 @@ namespace MHRS_OtomatikRandevu.Services
 
         public async Task<ApiResponse<T>?> Get<T>(string baseUrl, string endpoint) where T : class
         {
+            var url = baseUrl + endpoint;
             try
             {
-                var response = await _httpClient.GetAsync(baseUrl + endpoint);
+                TraceRequest("GET", url);
+                var response = await _httpClient.GetAsync(url);
                 var contentString = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -55,9 +59,11 @@ namespace MHRS_OtomatikRandevu.Services
 
         public async Task<T?> GetSimple<T>(string baseUrl, string endpoint) where T : class
         {
+            var url = baseUrl + endpoint;
             try
             {
-                var response = await _httpClient.GetAsync(baseUrl + endpoint);
+                TraceRequest("GET", url);
+                var response = await _httpClient.GetAsync(url);
                 var contentString = await response.Content.ReadAsStringAsync();
                 
                 if(response.IsSuccessStatusCode)
@@ -77,11 +83,13 @@ namespace MHRS_OtomatikRandevu.Services
 
         public async Task<ApiResponse<T>?> Post<T>(string baseUrl, string endpoint, object payload) where T : class
         {
+            var url = baseUrl + endpoint;
             try
             {
                 var jsonPayload = JsonSerializer.Serialize(payload, payload.GetType());
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(baseUrl + endpoint, content);
+                TraceRequest("POST", url);
+                var response = await _httpClient.PostAsync(url, content);
                 var responseString = await response.Content.ReadAsStringAsync();
                 
                 if (string.IsNullOrWhiteSpace(responseString)) {
@@ -97,11 +105,13 @@ namespace MHRS_OtomatikRandevu.Services
         public async Task<BaseResponse> PostSimple<T>(string baseUrl, string endpoint, object payload) where T : class
         {
             var result = new BaseResponse { Success = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+            var url = baseUrl + endpoint;
             try
             {
                 var jsonPayload = JsonSerializer.Serialize(payload, payload.GetType());
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(baseUrl + endpoint, content);
+                TraceRequest("POST", url);
+                var response = await _httpClient.PostAsync(url, content);
                 result.StatusCode = response.StatusCode;
                 var responseContent = await response.Content.ReadAsStringAsync();
                 
@@ -120,11 +130,13 @@ namespace MHRS_OtomatikRandevu.Services
 		public async Task<BaseResponse> PostForCancelAndRebook(string baseUrl, string endpoint, RandevuIptalEtYeniAlRequestModel payload)
         {
             var result = new BaseResponse { Success = false, StatusCode = System.Net.HttpStatusCode.BadRequest };
+            var url = baseUrl + endpoint;
             try
             {
                 var jsonPayload = JsonSerializer.Serialize(payload);
                 var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(baseUrl + endpoint, content);
+                TraceRequest("POST", url);
+                var response = await _httpClient.PostAsync(url, content);
                 result.StatusCode = response.StatusCode;
                 var responseContent = await response.Content.ReadAsStringAsync();
                 
@@ -152,6 +164,18 @@ namespace MHRS_OtomatikRandevu.Services
                 Logger.Error($"İstek hatası ({endpoint}): {e.Message}", e);
             }
             return result;
+        }
+
+        private static void TraceRequest(string method, string url)
+        {
+            try
+            {
+                NetworkLogHook?.Invoke($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {method} {url}");
+            }
+            catch
+            {
+                // Network logging must never break request flow.
+            }
         }
     }
 }

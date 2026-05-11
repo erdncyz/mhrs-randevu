@@ -1,0 +1,3 @@
+/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/MHRSMobileApp/bin/Release/net8.0-android/publish/com.companyname.mhrsmobileapp-Signed.apk
+/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/MHRSMobileApp/bin/Release/net8.0-android/publish/com.companyname.mhrsmobileapp.apk
+/Users/erdincyilmaz/Desktop/MHRS-OtomatikRandevu/MHRSMobileApp/bin/Release/net8.0-android/publish/_Microsoft.Android.Resource.Designer.dll

@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MHRSMobileApp.MainPage"
+             Title="MHRS Mobil">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+            <Label Text="Authorization Bearer JWT" FontAttributes="Bold" />
+            <Editor x:Name="TokenEditor" AutoSize="TextChanges" Placeholder="Bearer eyJ..." />
+
+            <HorizontalStackLayout Spacing="8">
+                <Button x:Name="ImportButton" Text="Token Ice Aktar" Clicked="OnImportClicked" />
+                <Button Text="Formu Temizle" Clicked="OnClearClicked" />
+            </HorizontalStackLayout>
+
+            <Label x:Name="StatusLabel" Text="Token bekleniyor" />
+
+            <BoxView HeightRequest="1" Opacity="0.3" />
+
+            <Label Text="Bildirim" FontAttributes="Bold" />
+            <Entry x:Name="TelegramBotTokenEntry" Placeholder="Telegram Bot Token" />
+            <Entry x:Name="TelegramChatIdEntry" Placeholder="Telegram Chat ID" />
+            <HorizontalStackLayout Spacing="8">
+                <Label VerticalOptions="Center" Text="Uygun slot bulununca Telegram mesaj gonder" />
+                <Switch x:Name="NotifyEnabledSwitch" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Bildirim Ayarlarini Kaydet" Clicked="OnSaveNotifyClicked" />
+                <Button Text="Test Mesaji Gonder" Clicked="OnTestNotifyClicked" />
+            </HorizontalStackLayout>
+            <Label x:Name="NotifyStatusLabel" />
+
+            <BoxView HeightRequest="1" Opacity="0.3" />
+
+            <Label Text="Filtreler" FontAttributes="Bold" />
+            <Picker x:Name="ProvincePicker" Title="Il" SelectedIndexChanged="OnProvinceChanged" />
+            <Picker x:Name="DistrictPicker" Title="Ilce" SelectedIndexChanged="OnDistrictChanged" />
+            <Picker x:Name="ClinicPicker" Title="Klinik" SelectedIndexChanged="OnClinicChanged" />
+            <Picker x:Name="HospitalPicker" Title="Hastane" SelectedIndexChanged="OnHospitalChanged" />
+            <Picker x:Name="PlacePicker" Title="Muayene Yeri (Opsiyonel)" />
+            <Picker x:Name="DoctorPicker" Title="Doktor (Opsiyonel)" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <DatePicker x:Name="StartDatePicker" Format="dd.MM.yyyy" />
+                <DatePicker x:Name="EndDatePicker" Grid.Column="1" Format="dd.MM.yyyy" />
+            </Grid>
+
+            <Entry x:Name="IncludeHoursEntry" Placeholder="Dahil Saatler (orn: 9,10,11)" />
+            <Entry x:Name="ExcludeHoursEntry" Placeholder="Haric Saatler (orn: 8,17,18)" />
+
+            <Button Text="Slot Ara" Clicked="OnSearchClicked" />
+            <Label x:Name="SearchStatusLabel" />
+
+            <BoxView HeightRequest="1" Opacity="0.3" />
+
+            <Label Text="Otomatik Tarama" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <Entry x:Name="AutoIntervalEntry" Keyboard="Numeric" Placeholder="Tarama araligi" Text="30" />
+                <Picker x:Name="AutoIntervalUnitPicker" Title="Birim" Grid.Column="1" />
+            </Grid>
+            <Button x:Name="AutoScanButton" Text="Otomatik Baslat" Clicked="OnAutoScanClicked" />
+            <Label x:Name="AutoStatusLabel" />
+            <Label x:Name="AutoRequestCountLabel" Text="Deneme: 0" />
+
+            <BoxView HeightRequest="1" Opacity="0.3" />
+
+            <Label Text="Network Log" FontAttributes="Bold" />
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Log Yenile" Clicked="OnRefreshLogsClicked" />
+                <Button Text="Log Temizle" Clicked="OnClearLogsClicked" />
+            </HorizontalStackLayout>
+            <Editor x:Name="NetworkLogEditor"
+                    IsReadOnly="True"
+                    HeightRequest="180"
+                    AutoSize="TextChanges"
+                    Placeholder="Network log burada gorunur" />
+
+            <CollectionView x:Name="SlotsCollection" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="1" Stroke="#333" Padding="10" Margin="0,4">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding BaslangicZamani}" FontAttributes="Bold" />
+                                <Label Text="{Binding HekimAdi}" />
+                                <Label Text="{Binding KurumAdi}" />
+                                <Button Text="Randevu Al" Clicked="OnBookClicked" CommandParameter="{Binding .}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
